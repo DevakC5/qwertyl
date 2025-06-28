@@ -1,0 +1,43 @@
+services:
+  - type: web
+    name: businessastra
+    env: python
+    region: oregon
+    plan: starter
+    buildCommand: |
+      pip install --upgrade pip
+      pip install -r requirements_production.txt
+    startCommand: gunicorn --config gunicorn.conf.py wsgi:app
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: WTF_CSRF_ENABLED
+        value: true
+      - key: FORCE_HTTPS
+        value: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: businessastra-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: TOGETHER_API_KEY
+        sync: false  # Set this manually in Render dashboard
+    disk:
+      name: businessastra-disk
+      mountPath: /app/uploads_temp
+      sizeGB: 1
+
+  - type: pserv
+    name: businessastra-db
+    env: postgresql
+    region: oregon
+    plan: starter
+    databaseName: businessastra
+    databaseUser: businessastra
+
+envVarGroups:
+  - name: app-secrets
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true

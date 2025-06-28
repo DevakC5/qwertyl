@@ -1,5 +1,5 @@
-# Production Requirements for BusinessAstra
-# Install with: pip install -r requirements_production.txt
+# Render-specific requirements for BusinessAstra
+# Optimized for deployment on Render with Python 3.12
 
 # Core Flask and web framework
 Flask==3.1.0
@@ -8,19 +8,23 @@ Werkzeug==3.1.3
 # Database ORM
 Flask-SQLAlchemy==3.1.1
 SQLAlchemy==2.0.23
+psycopg2-binary==2.9.9
 
 # Security extensions
 Flask-WTF==1.2.1
 Flask-Talisman==1.1.0
 Flask-Limiter==3.8.0
+redis==5.0.1
 
-# Document processing
+# Document processing (Render-compatible versions)
 python-docx==1.1.0
 openpyxl==3.1.2
 python-pptx==0.6.23
 pdfplumber==0.11.0
 pdf2image==1.17.0
-Pillow>=10.0.0,<11.0.0
+
+# Image processing (compatible with build systems)
+Pillow>=9.5.0,<11.0.0
 
 # PDF generation
 reportlab==4.0.8
@@ -34,16 +38,6 @@ together==1.5.17
 
 # Production WSGI server
 gunicorn==23.0.0
-
-# Database drivers (uncomment as needed)
-# psycopg2-binary==2.9.9  # For PostgreSQL
-# pymysql==1.1.1         # For MySQL
-
-# Redis for rate limiting (optional)
-# redis==5.0.1
-
-# Monitoring and logging (optional)
-# sentry-sdk[flask]==2.0.0
 
 # Process management
 supervisor==4.2.5

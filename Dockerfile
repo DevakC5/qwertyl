@@ -3,10 +3,19 @@ FROM python:3.12-slim
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies for document processing
+# Install system dependencies for document processing and Pillow
 RUN apt-get update && apt-get install -y \
     poppler-utils \
     curl \
+    gcc \
+    g++ \
+    libjpeg-dev \
+    zlib1g-dev \
+    libfreetype6-dev \
+    liblcms2-dev \
+    libopenjp2-7-dev \
+    libtiff5-dev \
+    libwebp-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first for better caching
