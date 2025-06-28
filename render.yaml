@@ -4,6 +4,7 @@ services:
     env: python
     region: oregon
     plan: starter
+    pythonVersion: 3.12.3 # ✅ Force Python 3.12 to avoid SQLAlchemy crash
     buildCommand: |
       pip install --upgrade pip
       pip install -r requirements_production.txt
@@ -22,7 +23,7 @@ services:
       - key: SECRET_KEY
         generateValue: true
       - key: TOGETHER_API_KEY
-        sync: false  # Set this manually in Render dashboard
+        sync: false # Set this manually in Render dashboard
     disk:
       name: businessastra-disk
       mountPath: /app/uploads_temp
