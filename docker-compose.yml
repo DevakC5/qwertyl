@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  businessastra:
+    build: .
+    container_name: businessastra-app
+    ports:
+      - "8000:8000"
+    environment:
+      - FLASK_ENV=production
+      - DATABASE_URL=postgresql://businessastra:password@db:5432/businessastra
+      - REDIS_URL=redis://redis:6379/0
+    volumes:
+      - ./uploads_temp:/app/uploads_temp
+      - ./static/outputs:/app/static/outputs
+      - ./businessastra.log:/app/businessastra.log
+    depends_on:
+      - db
+      - redis
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  db:
+    image: postgres:16-alpine
+    container_name: businessastra-db
+    environment:
+      - POSTGRES_DB=businessastra
+      - POSTGRES_USER=businessastra
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U businessastra"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  redis:
+    image: redis:7-alpine
+    container_name: businessastra-redis
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  nginx:
+    image: nginx:alpine
+    container_name: businessastra-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro  # SSL certificates
+    depends_on:
+      - businessastra
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
